@@ -135,12 +135,14 @@ def guppy_options    = modules['guppy']
 def qcat_options     = modules['qcat']
 def nanolyse_options = modules['nanolyse']
 def bambu_options    = modules['bambu']
+def jaffal_options   = modules['jaffal']
 
 include { GUPPY                 } from '../modules/local/guppy'                 addParams( options: guppy_options                )
 include { QCAT                  } from '../modules/local/qcat'                  addParams( options: qcat_options                 ) 
 include { NANOLYSE              } from '../modules/local/nanolyse'              addParams( options: nanolyse_options             )
 include { BAM_RENAME            } from '../modules/local/bam_rename'            addParams( options: [:]                          )
 include { BAMBU                 } from '../modules/local/bambu'                 addParams( options: bambu_options                )
+include { JAFFAL                } from '../modules/local/jaffal'                addParams( options: jaffal_options               )
 include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions' addParams( options: [publish_files : ['csv':'']] )
 include { MULTIQC               } from '../modules/local/multiqc'               addParams( options: multiqc_options              )
 
@@ -435,6 +437,12 @@ workflow NANOSEQ{
         RNA_MODIFICATION_XPORE_M6ANET( ch_sample, ch_nanopolish_sortbam )
     }
 
+    if (!params.skip_fusion_analysis && (params.protocol == 'cDNA' || params.protocol == 'directRNA')) {
+        /*
+         * SUBWORKFLOW: RNA fusion analysis
+         */
+        JAFFAL()
+    }
 
     /*
      * MODULE: Parse software version numbers
