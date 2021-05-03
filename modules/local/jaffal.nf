@@ -19,14 +19,15 @@ process JAFFAL {
 //    tuple val(meta), path(fastq)
 //    path nanolyse_fasta
     
-    output:
+//    output:
 //    tuple val(meta), path("*.fastq.gz")   ,emit: nanolyse_fastq
 //    path "*.fasta"                          ,emit: fasta
 //    path "*.version.txt"                  ,emit: version
 
     script:
+    jaffal_groovy = '/home/wanyk/Downloads/nanoseq/bin/JAFFAL.groovy'
     """
     echo "haha"
-    bpipe run /Users/yukkei/add_mod/nanoseq/bin/JAFFAL.groovy /Users/yukkei/add_mod/demo/data/HEK293T-WT-rep1/fastq/HEK293T-WT-rep1.fastq.gz
+    bpipe run $jaffal_groovy /home/wanyk/Downloads/LongReadFusionSimulation/ONT_fus_sim_75err.fastq.gz
     """
 }
