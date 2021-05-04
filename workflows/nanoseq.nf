@@ -438,10 +438,16 @@ workflow NANOSEQ{
     }
 
     if (!params.skip_fusion_analysis && (params.protocol == 'cDNA' || params.protocol == 'directRNA')) {
+        if (params.jaffal_ref_dir) {
+             ch_jaffal_ref_dir = file(params.jaffal_ref_dir, checkIfExists: true)
+        } else { exit 1, 'JAFFAL reference directory not specified!' }
+        ch_sample
+           .map { it -> [ it[0], it[6] ]}
+           .set { ch_jaffal_input }
         /*
          * SUBWORKFLOW: RNA fusion analysis
          */
-        JAFFAL()
+        JAFFAL( ch_jaffal_input, ch_jaffal_ref_dir )
     }
 
     /*
