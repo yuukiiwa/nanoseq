@@ -135,14 +135,12 @@ def guppy_options    = modules['guppy']
 def qcat_options     = modules['qcat']
 def nanolyse_options = modules['nanolyse']
 def bambu_options    = modules['bambu']
-def jaffal_options   = modules['jaffal']
 
 include { GUPPY                 } from '../modules/local/guppy'                 addParams( options: guppy_options                )
 include { QCAT                  } from '../modules/local/qcat'                  addParams( options: qcat_options                 ) 
 include { NANOLYSE              } from '../modules/local/nanolyse'              addParams( options: nanolyse_options             )
 include { BAM_RENAME            } from '../modules/local/bam_rename'            addParams( options: [:]                          )
 include { BAMBU                 } from '../modules/local/bambu'                 addParams( options: bambu_options                )
-include { JAFFAL                } from '../modules/local/jaffal'                addParams( options: jaffal_options               )
 include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions' addParams( options: [publish_files : ['csv':'']] )
 include { MULTIQC               } from '../modules/local/multiqc'               addParams( options: multiqc_options              )
 
@@ -170,6 +168,8 @@ def nanopolish_options          = modules['nanopolish']
 def xpore_m6anet_dataprep_options = modules['xpore_m6anet_dataprep']
 def xpore_diffmod_options = modules['xpore_diffmod']
 def m6anet_inference_options = modules['m6anet_inference']
+def jaffal_options   = modules['jaffal']
+
 
 include { INPUT_CHECK                      } from '../subworkflows/local/input_check'                       addParams( options: [:] )
 include { QCBASECALL_PYCOQC_NANOPLOT       } from '../subworkflows/local/qcbasecall_pycoqc_nanoplot'        addParams( pycoqc_options: pycoqc_options, nanoplot_summary_options: nanoplot_summary_options )
@@ -181,7 +181,8 @@ include { BEDTOOLS_UCSC_BIGWIG             } from '../subworkflows/local/bedtool
 include { BEDTOOLS_UCSC_BIGBED             } from '../subworkflows/local/bedtools_ucsc_bigbed'              addParams( bigbed_options: bigbed_options )
 include { QUANTIFY_STRINGTIE_FEATURECOUNTS } from '../subworkflows/local/quantify_stringtie_featurecounts'  addParams( stringtie2_options: stringtie2_options, featurecounts_options: featurecounts_options )
 include { DIFFERENTIAL_DESEQ2_DEXSEQ       } from '../subworkflows/local/differential_deseq2_dexseq'        addParams( deseq2_options: deseq2_options, dexseq_options: dexseq_options )
-include { RNA_MODIFICATION_XPORE_M6ANET    } from '../subworkflows/local/rna_modifications_xpore_m6anet'     addParams( nanopolish_options: nanopolish_options, xpore_m6anet_dataprep_options: xpore_m6anet_dataprep_options, xpore_diffmod_options: xpore_diffmod_options, m6anet_inference_options: m6anet_inference_options )
+include { RNA_MODIFICATION_XPORE_M6ANET    } from '../subworkflows/local/rna_modifications_xpore_m6anet'    addParams( nanopolish_options: nanopolish_options, xpore_m6anet_dataprep_options: xpore_m6anet_dataprep_options, xpore_diffmod_options: xpore_diffmod_options, m6anet_inference_options: m6anet_inference_options )
+include { RNA_FUSIONS_JAFFAL               } from '../subworkflows/local/rna_fusions_jaffal'                addParams( jaffal_options: jaffal_options )
 
 ////////////////////////////////////////////////////
 /* --    IMPORT NF-CORE MODULES/SUBWORKFLOWS   -- */
@@ -442,7 +443,7 @@ workflow NANOSEQ{
         /*
          * SUBWORKFLOW: RNA_FUSIONS_JAFFAL
          */
-        JAFFAL( ch_jaffal_input, params.jaffal_ref_dir )
+        RNA_FUSIONS_JAFFAL( ch_sample, params.jaffal_ref_dir )
     }
 
     /*
